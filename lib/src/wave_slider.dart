@@ -43,8 +43,8 @@ class _WaveSliderState extends State<WaveSlider>
 
   @override
   void dispose() {
-    super.dispose();
     _slideController.dispose();
+    super.dispose();
   }
 
   void _handleChanged(double val) {
@@ -135,6 +135,12 @@ class WaveSliderController extends ChangeNotifier {
     controller
       ..addListener(_onProgressUpdate)
       ..addStatusListener(_onStatusUpdate);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   final AnimationController controller;
