@@ -16,7 +16,12 @@ class WaveSlider extends StatefulWidget {
     this.onChangeEnd,
     this.onChangeStart,
     @required this.onChanged,
-  }) : assert(sliderHeight >= 50 && sliderHeight <= 600);
+  })  : assert(sliderHeight >= 50 && sliderHeight <= 600),
+        assert(sliderWidth > 0),
+        assert(onChanged != null &&
+            color != null &&
+            sliderWidth != null &&
+            sliderHeight != null);
 
   @override
   _WaveSliderState createState() => _WaveSliderState();
@@ -43,18 +48,21 @@ class _WaveSliderState extends State<WaveSlider>
   }
 
   _handleChanged(double val) {
-    assert(widget.onChanged != null);
-    widget.onChanged(val);
+    if (widget.onChanged != null) {
+      widget.onChanged(val);
+    }
   }
 
   _handleChangeStart(double val) {
-    assert(widget.onChangeStart != null);
-    widget.onChangeStart(val);
+    if (widget.onChangeStart != null) {
+      widget.onChangeStart(val);
+    }
   }
 
   _handleChangeEnd(double val) {
-    assert(widget.onChangeEnd != null);
-    widget.onChangeEnd(val);
+    if (widget.onChangeEnd != null) {
+      widget.onChangeEnd(val);
+    }
   }
 
   void _updateDragPosition(Offset val) {

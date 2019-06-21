@@ -24,7 +24,12 @@ class WavePainter extends CustomPainter {
     @required this.animationProgress,
     @required this.sliderState,
     @required this.color,
-  })  : wavePainter = Paint()
+  })  : assert(sliderPosition != null &&
+            dragPercentage != null &&
+            animationProgress != null &&
+            sliderState != null &&
+            color != null),
+        wavePainter = Paint()
           ..color = color
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2.5,
@@ -70,9 +75,7 @@ class WavePainter extends CustomPainter {
   _paintStartupWave(Canvas canvas, Size size) {
     WaveCurveDefinitions line = _calculateWaveLineDefinitions(size);
 
-    double waveHeight = lerpDouble(
-        size.height,
-        line.controlHeight,
+    double waveHeight = lerpDouble(size.height, line.controlHeight,
         Curves.elasticOut.transform(animationProgress));
     line.controlHeight = waveHeight;
     _paintWaveLine(canvas, size, line);
@@ -86,8 +89,8 @@ class WavePainter extends CustomPainter {
   _paintStoppingWave(Canvas canvas, Size size) {
     WaveCurveDefinitions line = _calculateWaveLineDefinitions(size);
 
-    double waveHeight = lerpDouble(line.controlHeight,
-        size.height, Curves.elasticOut.transform(animationProgress));
+    double waveHeight = lerpDouble(line.controlHeight, size.height,
+        Curves.elasticOut.transform(animationProgress));
 
     line.controlHeight = waveHeight;
 
