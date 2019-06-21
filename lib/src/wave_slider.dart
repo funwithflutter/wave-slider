@@ -2,13 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:wave_slider/src/wave_painter.dart';
 
 class WaveSlider extends StatefulWidget {
-  final double sliderWidth;
-  final double sliderHeight;
-  final Color color;
-  final ValueChanged<double> onChanged;
-  final ValueChanged<double> onChangeStart;
-  final ValueChanged<double> onChangeEnd;
-
   WaveSlider({
     this.sliderWidth = 350.0,
     this.sliderHeight = 50.0,
@@ -22,6 +15,13 @@ class WaveSlider extends StatefulWidget {
             color != null &&
             sliderWidth != null &&
             sliderHeight != null);
+
+  final double sliderWidth;
+  final double sliderHeight;
+  final Color color;
+  final ValueChanged<double> onChanged;
+  final ValueChanged<double> onChangeStart;
+  final ValueChanged<double> onChangeEnd;
 
   @override
   _WaveSliderState createState() => _WaveSliderState();
@@ -47,19 +47,19 @@ class _WaveSliderState extends State<WaveSlider>
     _slideController.dispose();
   }
 
-  _handleChanged(double val) {
+  void _handleChanged(double val) {
     if (widget.onChanged != null) {
       widget.onChanged(val);
     }
   }
 
-  _handleChangeStart(double val) {
+  void _handleChangeStart(double val) {
     if (widget.onChangeStart != null) {
       widget.onChangeStart(val);
     }
   }
 
-  _handleChangeEnd(double val) {
+  void _handleChangeEnd(double val) {
     if (widget.onChangeEnd != null) {
       widget.onChangeEnd(val);
     }
@@ -82,16 +82,16 @@ class _WaveSliderState extends State<WaveSlider>
   }
 
   void _onDragStart(BuildContext context, DragStartDetails start) {
-    RenderBox box = context.findRenderObject();
-    Offset localOffset = box.globalToLocal(start.globalPosition);
+    final RenderBox box = context.findRenderObject();
+    final Offset localOffset = box.globalToLocal(start.globalPosition);
     _slideController.setStateToStart();
     _updateDragPosition(localOffset);
     _handleChangeStart(_dragPercentage);
   }
 
   void _onDragUpdate(BuildContext context, DragUpdateDetails update) {
-    RenderBox box = context.findRenderObject();
-    Offset localOffset = box.globalToLocal(update.globalPosition);
+    final RenderBox box = context.findRenderObject();
+    final Offset localOffset = box.globalToLocal(update.globalPosition);
     _slideController.setStateToSliding();
     _updateDragPosition(localOffset);
     _handleChanged(_dragPercentage);
@@ -130,15 +130,15 @@ class _WaveSliderState extends State<WaveSlider>
 }
 
 class WaveSliderController extends ChangeNotifier {
-  final AnimationController controller;
-  SliderState _state = SliderState.resting;
-
   WaveSliderController({@required TickerProvider vsync})
       : controller = AnimationController(vsync: vsync) {
     controller
       ..addListener(_onProgressUpdate)
       ..addStatusListener(_onStatusUpdate);
   }
+
+  final AnimationController controller;
+  SliderState _state = SliderState.resting;
 
   void _onProgressUpdate() {
     notifyListeners();
