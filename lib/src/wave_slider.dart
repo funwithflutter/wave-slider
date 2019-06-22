@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:wave_slider/src/wave_painter.dart';
 
 class WaveSlider extends StatefulWidget {
+  /// Creates a wave slider.
+  /// 
+  /// When the state of the slider is changed the widget calls the [onChanged] callback.
   WaveSlider(
       {this.sliderHeight = 50.0,
       this.color = Colors.black,
@@ -13,10 +16,18 @@ class WaveSlider extends StatefulWidget {
         assert(sliderHeight != null),
         assert(sliderHeight >= 50 && sliderHeight <= 600);
 
+  /// The height of the slider can be set by specifying a [sliderHeight] - default is 50.0
   final double sliderHeight;
+  /// The color of the slider can be set by specifying a [color] - default is black.
   final Color color;
+  /// Called during a drag when the user is selecting a new value for the slider
+  /// by dragging.
+  /// 
+  /// Returns a percentage value between 0 and 100 for the current drag position.
   final ValueChanged<double> onChanged;
+  /// Called when the user starts selecting a new value for the slider.
   final ValueChanged<double> onChangeStart;
+  /// Called when the user is done selecting a new value for the slider.
   final ValueChanged<double> onChangeEnd;
 
   @override
