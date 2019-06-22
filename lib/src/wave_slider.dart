@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:wave_slider/src/wave_painter.dart';
 
 class WaveSlider extends StatefulWidget {
-  WaveSlider({
-    this.sliderHeight = 50.0,
-    this.color = Colors.black,
-    this.onChangeEnd,
-    this.onChangeStart,
-    @required this.onChanged,
-  })  : assert(sliderHeight >= 50 && sliderHeight <= 600),
-        assert(onChanged != null && color != null && sliderHeight != null);
+  WaveSlider(
+      {this.sliderHeight = 50.0,
+      this.color = Colors.black,
+      this.onChangeEnd,
+      this.onChangeStart,
+      @required this.onChanged})
+      : assert(onChanged != null),
+        assert(color != null),
+        assert(sliderHeight != null),
+        assert(sliderHeight >= 50 && sliderHeight <= 600);
 
   final double sliderHeight;
   final Color color;
