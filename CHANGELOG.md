@@ -1,3 +1,5 @@
-## [0.0.1] - TODO: Add release date.
+## [0.1.0] - 22 June 2019
 
-* TODO: Describe initial release.
+* Ported from the original example. Working to return a fractional value between 0 and 1.
+* Add safe area for paint.
+* Add documentation and help.

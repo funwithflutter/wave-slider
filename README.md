@@ -1,14 +1,123 @@
-# wave_slider
 
-A new Flutter package project.
+A Flutter slider that makes a wave effect when dragged. Does a little bounce when dropped.
 
 ## Getting Started
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
+To use this plugin, add `wave_slider` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+The color can be set with the **color** property. The slider size is dependent on the size of its parent. The height of the wave slider can be set with the **sliderHeigth** property - which is constrained with a minimum of 50 and a maximum of 600.
+
+  
+
+Values are retrieved by passing in an **onChanged** callback, which returns a value between 0 and 1 to indicate the current drag completion percentage.
+
+  
+
+The **onChangeStart** and **onChangeEnd** callbacks can be used to retrieve the start and end drag percentages respectively.
+
+### Example
+
+```dart
+
+import  'package:flutter/material.dart';
+
+import  'package:wave_slider/wave_slider.dart';
+
+  
+
+void  main() => runApp(MaterialApp(
+
+home: App(),
+
+));
+
+  
+
+class  App  extends  StatefulWidget {
+
+@override
+
+_AppState  createState() => _AppState();
+
+}
+
+  
+
+class  _AppState  extends  State<App> {
+
+double _dragPercentage = 0;
+
+  
+
+@override
+
+Widget  build(BuildContext context) {
+
+return  Scaffold(
+
+body: Column(
+
+mainAxisAlignment: MainAxisAlignment.center,
+
+children: <Widget>[
+
+WaveSlider(
+
+onChanged: (double dragUpdate) {
+
+setState(() {
+
+_dragPercentage = dragUpdate *
+
+100; // dragUpdate is a fractional value between 0 and 1
+
+});
+
+},
+
+),
+
+Padding(
+
+padding: const  EdgeInsets.all(8.0),
+
+child: Text(
+
+'Drag percentage',
+
+style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+
+),
+
+),
+
+Padding(
+
+padding: const  EdgeInsets.all(8.0),
+
+child: Text(
+
+'$_dragPercentage',
+
+style: TextStyle(fontSize: 16),
+
+),
+
+)
+
+],
+
+),
+
+);
+
+}
+
+}
+
+```
+
+  
+
+### Interested in how the package was made?
+Check out this [playlist](https://www.youtube.com/playlist?list=PLjr4ufdmNA4J2-KwMutexAjjf_VmjL1eH) on the [Fun with Flutter](https://www.youtube.com/funwithflutter) YouTube channel!

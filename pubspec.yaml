@@ -1,8 +1,8 @@
 name: wave_slider
-description: A new Flutter package project.
-version: 0.0.1
-author:
-homepage:
+description: A Flutter slider that makes a wave effect when dragged. Does a little bounce when dropped.
+version: 0.1.0
+author: Fun with Flutter <funwithflutter@gmail.com>)
+homepage: https://github.com/funwithflutter/wave-slider
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
