@@ -34,40 +34,45 @@ class WavePainter extends CustomPainter {
   final Paint wavePainter;
   final Paint fillPainter;
 
-  /// Previous slider position initialised at 0.0
-  double _previousSliderPosition = 0.0;
+  /// Previous slider position initialised at the [anchorRadius], which is the start
+  double _previousSliderPosition = anchorRadius;
+
+  static const double anchorRadius = 5;
 
   @override
   void paint(Canvas canvas, Size size) {
-    _paintAnchors(canvas, size);
+    final Size restrictedSize = Size(size.width - anchorRadius, size.height);
+    _paintAnchors(canvas, restrictedSize);
 
     switch (sliderState) {
       case SliderState.starting:
-        _paintStartupWave(canvas, size);
+        _paintStartupWave(canvas, restrictedSize);
         break;
       case SliderState.resting:
-        _paintRestingWave(canvas, size);
+        _paintRestingWave(canvas, restrictedSize);
         break;
       case SliderState.sliding:
-        _paintSlidingWave(canvas, size);
+        _paintSlidingWave(canvas, restrictedSize);
         break;
       case SliderState.stopping:
-        _paintStoppingWave(canvas, size);
+        _paintStoppingWave(canvas, restrictedSize);
         break;
       default:
-        _paintSlidingWave(canvas, size);
+        _paintSlidingWave(canvas, restrictedSize);
         break;
     }
   }
 
   void _paintAnchors(Canvas canvas, Size size) {
-    canvas.drawCircle(Offset(0.0, size.height), 5.0, fillPainter);
-    canvas.drawCircle(Offset(size.width, size.height), 5.0, fillPainter);
+    canvas.drawCircle(
+        Offset(anchorRadius, size.height), anchorRadius, fillPainter);
+    canvas.drawCircle(
+        Offset(size.width, size.height), anchorRadius, fillPainter);
   }
 
   void _paintRestingWave(Canvas canvas, Size size) {
     final Path path = Path();
-    path.moveTo(0.0, size.height);
+    path.moveTo(anchorRadius, size.height);
     path.lineTo(size.width, size.height);
     canvas.drawPath(path, wavePainter);
   }
@@ -100,7 +105,7 @@ class WavePainter extends CustomPainter {
   void _paintWaveLine(
       Canvas canvas, Size size, WaveCurveDefinitions waveCurve) {
     final Path path = Path();
-    path.moveTo(0.0, size.height);
+    path.moveTo(anchorRadius, size.height);
     path.lineTo(waveCurve.startOfBezier, size.height);
     path.cubicTo(
         waveCurve.leftControlPoint1,
@@ -139,8 +144,9 @@ class WavePainter extends CustomPainter {
     double endOfBend = sliderPosition + bendWidth / 2;
     double endOfBezier = endOfBend + bezierWidth;
 
-    startOfBend = (startOfBend <= 0.0) ? 0.0 : startOfBend;
-    startOfBezier = (startOfBezier <= 0.0) ? 0.0 : startOfBezier;
+    startOfBend = (startOfBend <= anchorRadius) ? anchorRadius : startOfBend;
+    startOfBezier =
+        (startOfBezier <= anchorRadius) ? anchorRadius : startOfBezier;
     endOfBend = (endOfBend > size.width) ? size.width : endOfBend;
     endOfBezier = (endOfBezier > size.width) ? size.width : endOfBezier;
 

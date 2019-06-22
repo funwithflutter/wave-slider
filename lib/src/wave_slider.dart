@@ -3,20 +3,14 @@ import 'package:wave_slider/src/wave_painter.dart';
 
 class WaveSlider extends StatefulWidget {
   WaveSlider({
-    this.sliderWidth = 350.0,
     this.sliderHeight = 50.0,
     this.color = Colors.black,
     this.onChangeEnd,
     this.onChangeStart,
     @required this.onChanged,
   })  : assert(sliderHeight >= 50 && sliderHeight <= 600),
-        assert(sliderWidth > 0),
-        assert(onChanged != null &&
-            color != null &&
-            sliderWidth != null &&
-            sliderHeight != null);
+        assert(onChanged != null && color != null && sliderHeight != null);
 
-  final double sliderWidth;
   final double sliderHeight;
   final Color color;
   final ValueChanged<double> onChanged;
@@ -31,6 +25,7 @@ class _WaveSliderState extends State<WaveSlider>
     with SingleTickerProviderStateMixin {
   double _dragPosition = 0.0;
   double _dragPercentage = 0.0;
+  double _sliderWidth = 0;
 
   WaveSliderController _slideController;
 
@@ -69,15 +64,15 @@ class _WaveSliderState extends State<WaveSlider>
     double newDragPosition = 0.0;
     if (val.dx <= 0.0) {
       newDragPosition = 0.0;
-    } else if (val.dx >= widget.sliderWidth) {
-      newDragPosition = widget.sliderWidth;
+    } else if (val.dx >= _sliderWidth) {
+      newDragPosition = _sliderWidth;
     } else {
       newDragPosition = val.dx;
     }
 
     setState(() {
       _dragPosition = newDragPosition;
-      _dragPercentage = _dragPosition / widget.sliderWidth;
+      _dragPercentage = _dragPosition / _sliderWidth;
     });
   }
 
@@ -95,7 +90,6 @@ class _WaveSliderState extends State<WaveSlider>
     _slideController.setStateToSliding();
     _updateDragPosition(localOffset);
     _handleChanged(_dragPercentage);
-    print(_dragPercentage);
   }
 
   void _onDragEnd(BuildContext context, DragEndDetails end) {
@@ -106,25 +100,36 @@ class _WaveSliderState extends State<WaveSlider>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Container(
-        width: widget.sliderWidth,
-        height: widget.sliderHeight,
-        child: CustomPaint(
-          painter: WavePainter(
-            color: widget.color,
-            sliderPosition: _dragPosition,
-            dragPercentage: _dragPercentage,
-            sliderState: _slideController.state,
-            animationProgress: _slideController.progress,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        _sliderWidth = constraints.maxWidth;
+        final double _safePadding = widget.sliderHeight / 4;
+        return Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: 8.0, vertical: _safePadding),
+          child: GestureDetector(
+            child: Container(
+              width: _sliderWidth,
+              height: widget.sliderHeight,
+              child: CustomPaint(
+                painter: WavePainter(
+                  color: widget.color,
+                  sliderPosition: _dragPosition,
+                  dragPercentage: _dragPercentage,
+                  sliderState: _slideController.state,
+                  animationProgress: _slideController.progress,
+                ),
+              ),
+            ),
+            onHorizontalDragStart: (DragStartDetails start) =>
+                _onDragStart(context, start),
+            onHorizontalDragUpdate: (DragUpdateDetails update) =>
+                _onDragUpdate(context, update),
+            onHorizontalDragEnd: (DragEndDetails end) =>
+                _onDragEnd(context, end),
           ),
-        ),
-      ),
-      onHorizontalDragStart: (DragStartDetails start) =>
-          _onDragStart(context, start),
-      onHorizontalDragUpdate: (DragUpdateDetails update) =>
-          _onDragUpdate(context, update),
-      onHorizontalDragEnd: (DragEndDetails end) => _onDragEnd(context, end),
+        );
+      },
     );
   }
 }
