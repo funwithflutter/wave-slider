@@ -3,32 +3,40 @@ import 'package:wave_slider/src/wave_painter.dart';
 
 class WaveSlider extends StatefulWidget {
   /// Creates a wave slider.
-  /// 
+  ///
   /// When the state of the slider is changed the widget calls the [onChanged] callback.
-  WaveSlider(
-      {this.sliderHeight = 50.0,
-      this.color = Colors.black,
-      this.onChangeEnd,
-      this.onChangeStart,
-      @required this.onChanged})
-      : assert(onChanged != null),
+  const WaveSlider({
+    this.sliderHeight = 50.0,
+    this.color = Colors.black,
+    this.onChangeEnd,
+    this.onChangeStart,
+    @required this.onChanged,
+    this.displayTrackball = false,
+  })  : assert(onChanged != null),
         assert(color != null),
         assert(sliderHeight != null),
         assert(sliderHeight >= 50 && sliderHeight <= 600);
 
   /// The height of the slider can be set by specifying a [sliderHeight] - default is 50.0
   final double sliderHeight;
+
   /// The color of the slider can be set by specifying a [color] - default is black.
   final Color color;
+
   /// Called during a drag when the user is selecting a new value for the slider
   /// by dragging.
-  /// 
+  ///
   /// Returns a percentage value between 0 and 100 for the current drag position.
   final ValueChanged<double> onChanged;
+
   /// Called when the user starts selecting a new value for the slider.
   final ValueChanged<double> onChangeStart;
+
   /// Called when the user is done selecting a new value for the slider.
   final ValueChanged<double> onChangeEnd;
+
+  /// Display a trackball below the line on the current position as a visual indicator
+  final bool displayTrackball;
 
   @override
   _WaveSliderState createState() => _WaveSliderState();
@@ -118,8 +126,12 @@ class _WaveSliderState extends State<WaveSlider>
         _sliderWidth = constraints.maxWidth;
         final double _safePadding = widget.sliderHeight / 4;
         return Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: 8.0, vertical: _safePadding),
+          padding: EdgeInsets.only(
+            left: 8.0,
+            right: 8.0,
+            top: _safePadding,
+            bottom: widget.displayTrackball ? _safePadding * 2 : _safePadding,
+          ),
           child: GestureDetector(
             child: Container(
               width: _sliderWidth,
@@ -131,6 +143,7 @@ class _WaveSliderState extends State<WaveSlider>
                   dragPercentage: _dragPercentage,
                   sliderState: _slideController.state,
                   animationProgress: _slideController.progress,
+                  displayTrackball: widget.displayTrackball,
                 ),
               ),
             ),
