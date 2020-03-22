@@ -20,6 +20,7 @@ class _AppState extends State<App> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           WaveSlider(
+            displayTrackball: false,
             onChanged: (double dragUpdate) {
               setState(() {
                 _dragPercentage = dragUpdate *
@@ -38,7 +39,7 @@ class _AppState extends State<App> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               '$_dragPercentage',
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
           )
         ],

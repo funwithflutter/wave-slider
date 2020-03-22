@@ -10,6 +10,7 @@ class WavePainter extends CustomPainter {
     @required this.animationProgress,
     @required this.sliderState,
     @required this.color,
+    this.displayTrackball = false,
   })  : assert(sliderPosition != null &&
             dragPercentage != null &&
             animationProgress != null &&
@@ -29,6 +30,8 @@ class WavePainter extends CustomPainter {
 
   final SliderState sliderState;
 
+  final bool displayTrackball;
+
   final Color color;
 
   final Paint wavePainter;
@@ -39,11 +42,15 @@ class WavePainter extends CustomPainter {
 
   static const double anchorRadius = 5;
 
+  double minWaveHeight;
+  double maxWaveHeight;
+
   @override
   void paint(Canvas canvas, Size size) {
     final Size restrictedSize = Size(size.width - anchorRadius, size.height);
     _paintAnchors(canvas, restrictedSize);
-
+    minWaveHeight = restrictedSize.height * 0.2;
+    maxWaveHeight = restrictedSize.height * 0.8;
     switch (sliderState) {
       case SliderState.starting:
         _paintStartupWave(canvas, restrictedSize);
@@ -75,6 +82,9 @@ class WavePainter extends CustomPainter {
     path.moveTo(anchorRadius, size.height);
     path.lineTo(size.width, size.height);
     canvas.drawPath(path, wavePainter);
+    if (displayTrackball) {
+      _paintTrackball(canvas, size);
+    }
   }
 
   void _paintStartupWave(Canvas canvas, Size size) {
@@ -84,11 +94,17 @@ class WavePainter extends CustomPainter {
         Curves.elasticOut.transform(animationProgress));
     line.controlHeight = waveHeight;
     _paintWaveLine(canvas, size, line);
+    if (displayTrackball) {
+      _paintTrackball(canvas, size, waveCurve: line);
+    }
   }
 
   void _paintSlidingWave(Canvas canvas, Size size) {
     final WaveCurveDefinitions line = _calculateWaveLineDefinitions(size);
     _paintWaveLine(canvas, size, line);
+    if (displayTrackball) {
+      _paintTrackball(canvas, size, waveCurve: line);
+    }
   }
 
   void _paintStoppingWave(Canvas canvas, Size size) {
@@ -100,6 +116,9 @@ class WavePainter extends CustomPainter {
     line.controlHeight = waveHeight;
 
     _paintWaveLine(canvas, size, line);
+    if (displayTrackball) {
+      _paintTrackball(canvas, size, waveCurve: line);
+    }
   }
 
   void _paintWaveLine(
@@ -126,10 +145,25 @@ class WavePainter extends CustomPainter {
     canvas.drawPath(path, wavePainter);
   }
 
-  WaveCurveDefinitions _calculateWaveLineDefinitions(Size size) {
-    final double minWaveHeight = size.height * 0.2;
-    final double maxWaveHeight = size.height * 0.8;
+  void _paintTrackball(Canvas canvas, Size size,
+      {WaveCurveDefinitions waveCurve}) {
+    double indicatorSize = minWaveHeight;
+    double centerPoint = sliderPosition, controlHeight = size.height;
+    centerPoint = (centerPoint > size.width) ? size.width : centerPoint;
+    if (waveCurve != null) {
+      centerPoint = waveCurve.centerPoint;
+      controlHeight = waveCurve.controlHeight;
 
+      indicatorSize = (size.height - controlHeight) / 2.5;
+      if (indicatorSize < minWaveHeight) {
+        indicatorSize = minWaveHeight;
+      }
+    }
+    canvas.drawCircle(Offset(centerPoint, controlHeight + indicatorSize * 1.5),
+        indicatorSize, fillPainter);
+  }
+
+  WaveCurveDefinitions _calculateWaveLineDefinitions(Size size) {
     final double controlHeight =
         (size.height - minWaveHeight) - (maxWaveHeight * dragPercentage);
 
