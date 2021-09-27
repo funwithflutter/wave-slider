@@ -5,18 +5,13 @@ import 'package:wave_slider/src/wave_slider.dart';
 
 class WavePainter extends CustomPainter {
   WavePainter({
-    @required this.sliderPosition,
-    @required this.dragPercentage,
-    @required this.animationProgress,
-    @required this.sliderState,
-    @required this.color,
+    required this.sliderPosition,
+    required this.dragPercentage,
+    required this.animationProgress,
+    required this.sliderState,
+    required this.color,
     this.displayTrackball = false,
-  })  : assert(sliderPosition != null &&
-            dragPercentage != null &&
-            animationProgress != null &&
-            sliderState != null &&
-            color != null),
-        wavePainter = Paint()
+  })  : wavePainter = Paint()
           ..color = color
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2.5,
@@ -42,8 +37,8 @@ class WavePainter extends CustomPainter {
 
   static const double anchorRadius = 5;
 
-  double minWaveHeight;
-  double maxWaveHeight;
+  double? minWaveHeight;
+  late double maxWaveHeight;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -90,7 +85,7 @@ class WavePainter extends CustomPainter {
   void _paintStartupWave(Canvas canvas, Size size) {
     final WaveCurveDefinitions line = _calculateWaveLineDefinitions(size);
 
-    final double waveHeight = lerpDouble(size.height, line.controlHeight,
+    final double? waveHeight = lerpDouble(size.height, line.controlHeight,
         Curves.elasticOut.transform(animationProgress));
     line.controlHeight = waveHeight;
     _paintWaveLine(canvas, size, line);
@@ -110,7 +105,7 @@ class WavePainter extends CustomPainter {
   void _paintStoppingWave(Canvas canvas, Size size) {
     final WaveCurveDefinitions line = _calculateWaveLineDefinitions(size);
 
-    final double waveHeight = lerpDouble(line.controlHeight, size.height,
+    final double? waveHeight = lerpDouble(line.controlHeight, size.height,
         Curves.elasticOut.transform(animationProgress));
 
     line.controlHeight = waveHeight;
@@ -130,12 +125,12 @@ class WavePainter extends CustomPainter {
         waveCurve.leftControlPoint1,
         size.height,
         waveCurve.leftControlPoint2,
-        waveCurve.controlHeight,
+        waveCurve.controlHeight!,
         waveCurve.centerPoint,
-        waveCurve.controlHeight);
+        waveCurve.controlHeight!);
     path.cubicTo(
         waveCurve.rightControlPoint1,
-        waveCurve.controlHeight,
+        waveCurve.controlHeight!,
         waveCurve.rightControlPoint2,
         size.height,
         waveCurve.endOfBezier,
@@ -146,26 +141,26 @@ class WavePainter extends CustomPainter {
   }
 
   void _paintTrackball(Canvas canvas, Size size,
-      {WaveCurveDefinitions waveCurve}) {
-    double indicatorSize = minWaveHeight;
-    double centerPoint = sliderPosition, controlHeight = size.height;
+      {WaveCurveDefinitions? waveCurve}) {
+    double? indicatorSize = minWaveHeight;
+    double? centerPoint = sliderPosition, controlHeight = size.height;
     centerPoint = (centerPoint > size.width) ? size.width : centerPoint;
     if (waveCurve != null) {
       centerPoint = waveCurve.centerPoint;
       controlHeight = waveCurve.controlHeight;
 
-      indicatorSize = (size.height - controlHeight) / 2.5;
-      if (indicatorSize < minWaveHeight) {
+      indicatorSize = (size.height - controlHeight!) / 2.5;
+      if (indicatorSize < minWaveHeight!) {
         indicatorSize = minWaveHeight;
       }
     }
-    canvas.drawCircle(Offset(centerPoint, controlHeight + indicatorSize * 1.5),
+    canvas.drawCircle(Offset(centerPoint, controlHeight + indicatorSize! * 1.5),
         indicatorSize, fillPainter);
   }
 
   WaveCurveDefinitions _calculateWaveLineDefinitions(Size size) {
     final double controlHeight =
-        (size.height - minWaveHeight) - (maxWaveHeight * dragPercentage);
+        (size.height - minWaveHeight!) - (maxWaveHeight * dragPercentage);
 
     final double bendWidth = 20 + 20 * dragPercentage;
     final double bezierWidth = 20 + 20 * dragPercentage;
@@ -197,12 +192,12 @@ class WavePainter extends CustomPainter {
         ? maxSlideDifference
         : slideDifference;
 
-    double bend =
+    double? bend =
         lerpDouble(0.0, bendability, slideDifference / maxSlideDifference);
     final bool moveLeft = sliderPosition < _previousSliderPosition;
-    bend = moveLeft ? -bend : bend;
+    bend = moveLeft ? -bend! : bend;
 
-    leftBendControlPoint1 = leftBendControlPoint1 + bend;
+    leftBendControlPoint1 = leftBendControlPoint1 + bend!;
     leftBendControlPoint2 = leftBendControlPoint2 - bend;
     rightBendControlPoint1 = rightBendControlPoint1 - bend;
     rightBendControlPoint2 = rightBendControlPoint2 + bend;
@@ -237,14 +232,14 @@ class WavePainter extends CustomPainter {
 
 class WaveCurveDefinitions {
   WaveCurveDefinitions({
-    @required this.startOfBezier,
-    @required this.endOfBezier,
-    @required this.leftControlPoint1,
-    @required this.leftControlPoint2,
-    @required this.rightControlPoint1,
-    @required this.rightControlPoint2,
-    @required this.controlHeight,
-    @required this.centerPoint,
+    required this.startOfBezier,
+    required this.endOfBezier,
+    required this.leftControlPoint1,
+    required this.leftControlPoint2,
+    required this.rightControlPoint1,
+    required this.rightControlPoint2,
+    required this.controlHeight,
+    required this.centerPoint,
   });
 
   double startOfBezier;
@@ -253,6 +248,6 @@ class WaveCurveDefinitions {
   double leftControlPoint2;
   double rightControlPoint1;
   double rightControlPoint2;
-  double controlHeight;
+  double? controlHeight;
   double centerPoint;
 }

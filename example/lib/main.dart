@@ -28,8 +28,8 @@ class _AppState extends State<App> {
               });
             },
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
             child: Text(
               'Drag percentage',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
