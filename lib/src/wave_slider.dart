@@ -10,11 +10,9 @@ class WaveSlider extends StatefulWidget {
     this.color = Colors.black,
     this.onChangeEnd,
     this.onChangeStart,
-    @required this.onChanged,
+    required this.onChanged,
     this.displayTrackball = false,
-  })  : assert(onChanged != null),
-        assert(color != null),
-        assert(sliderHeight != null),
+  })  :
         assert(sliderHeight >= 50 && sliderHeight <= 600);
 
   /// The height of the slider can be set by specifying a [sliderHeight] - default is 50.0
@@ -30,10 +28,10 @@ class WaveSlider extends StatefulWidget {
   final ValueChanged<double> onChanged;
 
   /// Called when the user starts selecting a new value for the slider.
-  final ValueChanged<double> onChangeStart;
+  final ValueChanged<double>? onChangeStart;
 
   /// Called when the user is done selecting a new value for the slider.
-  final ValueChanged<double> onChangeEnd;
+  final ValueChanged<double>? onChangeEnd;
 
   /// Display a trackball below the line on the current position as a visual indicator
   final bool displayTrackball;
@@ -48,7 +46,7 @@ class _WaveSliderState extends State<WaveSlider>
   double _dragPercentage = 0.0;
   double _sliderWidth = 0;
 
-  WaveSliderController _slideController;
+  late WaveSliderController _slideController;
 
   @override
   void initState() {
@@ -64,20 +62,18 @@ class _WaveSliderState extends State<WaveSlider>
   }
 
   void _handleChanged(double val) {
-    if (widget.onChanged != null) {
-      widget.onChanged(val);
-    }
+    widget.onChanged(val);
   }
 
   void _handleChangeStart(double val) {
     if (widget.onChangeStart != null) {
-      widget.onChangeStart(val);
+      widget.onChangeStart!(val);
     }
   }
 
   void _handleChangeEnd(double val) {
     if (widget.onChangeEnd != null) {
-      widget.onChangeEnd(val);
+      widget.onChangeEnd!(val);
     }
   }
 
@@ -98,7 +94,7 @@ class _WaveSliderState extends State<WaveSlider>
   }
 
   void _onDragStart(BuildContext context, DragStartDetails start) {
-    final RenderBox box = context.findRenderObject();
+    final RenderBox box = context.findRenderObject() as RenderBox;
     final Offset localOffset = box.globalToLocal(start.globalPosition);
     _slideController.setStateToStart();
     _updateDragPosition(localOffset);
@@ -106,7 +102,7 @@ class _WaveSliderState extends State<WaveSlider>
   }
 
   void _onDragUpdate(BuildContext context, DragUpdateDetails update) {
-    final RenderBox box = context.findRenderObject();
+    final RenderBox box = context.findRenderObject() as RenderBox;
     final Offset localOffset = box.globalToLocal(update.globalPosition);
     _slideController.setStateToSliding();
     _updateDragPosition(localOffset);
@@ -161,7 +157,7 @@ class _WaveSliderState extends State<WaveSlider>
 }
 
 class WaveSliderController extends ChangeNotifier {
-  WaveSliderController({@required TickerProvider vsync})
+  WaveSliderController({required TickerProvider vsync})
       : controller = AnimationController(vsync: vsync) {
     controller
       ..addListener(_onProgressUpdate)
@@ -198,7 +194,7 @@ class WaveSliderController extends ChangeNotifier {
   SliderState get state => _state;
 
   void _startAnimation() {
-    controller.duration = Duration(milliseconds: 500);
+    controller.duration = const Duration(milliseconds: 500);
     controller.forward(from: 0.0);
     notifyListeners();
   }
